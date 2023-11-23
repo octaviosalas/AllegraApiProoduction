@@ -1,13 +1,15 @@
 import User from "../models/users.js"
 
 export const getAllUsers = async (req, res) => { 
-      User.find()
+   /*   User.find()
           .then((users) => { 
             res.send(users)
            })
           .catch((err) => { 
            console.log(err)
-           })
+           })*/
+
+           res.send("hi")
 }
 
 

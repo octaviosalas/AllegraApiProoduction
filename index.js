@@ -3,6 +3,7 @@ import bodyParser from "body-parser"
 import cors from "cors"
 import usersRoutes from "./routes/users.routes.js"
 import ordersRoutes from "./routes/orders.routes.js"
+import connectDataBase from "./database/connectDataBase.js"
 
 const app = express()
 const port = 4000
@@ -25,4 +26,5 @@ app.get('/', (req, res) => {
   
 app.listen(port, () => {
     console.log(`Allegra Production Sever is Gotten Up on Port: ${port} ✔✔`)   
+    connectDataBase()
   })
