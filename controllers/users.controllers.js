@@ -89,44 +89,44 @@ export const Login = async (req, res) => {
  }
 
 export const EditUserData = async (req, res) => { 
-    try {
-        const { userId } = req.params;
-        const { name, email, lastPassword, newPassword } = req.body;
-    
-        const user = await User.findOne({ _id: userId });
-    
-        if (!user) {
-          return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-    
-        const isPasswordValid = await bcrypt.compare(lastPassword, user.password);
-    
-        if (!isPasswordValid) {
-          return res.status(401).json({ message: 'La contraseña actual es incorrecta' });
-        }
-    
-        const updates = {};
-    
-        if (name && name !== user.name) {
-          updates.name = name;
-        }
-    
-        if (email && email !== user.email) {
-          updates.email = email;
-        }
-    
-        if (newPassword) {
-          const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-          updates.password = hashedNewPassword;
-        }
-    
-        if (Object.keys(updates).length > 0) {
-          await User.findOneAndUpdate({ _id: userId }, { $set: updates });
-        }
-    
-        res.status(200).json({ message: 'Datos actualizados con éxito' });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-      }
+  const { userId } = req.params;
+  const {name, surname, email, rol} = req.body
+
+
+  try {
+        User.findByIdAndUpdate({ _id: userId }, { 
+              name: name,
+              surname: surname,
+              email: email,
+              rol: rol
+          })
+          .then((userDataEdited) => {                                      
+          res.status(200).json({message: "The data has been edited succesfully", userDataEdited});
+          })
+          .catch((err) => { 
+            res.status(404).json({ message: 'Error!', err });
+          })
+
+    } catch (error) {
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+}
+
+
+export const deleteUser = async (req, res) => { 
+  const { userId } = req.params;
+  console.log("RECIBI:", req.params)
+
+  try {
+    const deletedUser = await User.findByIdAndDelete({_id: userId});
+
+    if (deletedUser) {
+      res.status(200).json({ message: 'User deleted Correctly', deleted: deletedUser });
+    } else {
+      res.status(404).json({ message: 'User doesen`t exist' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error' });
+  }
 }
