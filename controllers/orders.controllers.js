@@ -1,6 +1,7 @@
 import Orders from "../models/orders.js"
 
 export const getAllOrders = async (req, res) => { 
+  console.log("Recibi una peticion")
     Orders.find()
         .then((allOrders) => { 
         res.send(allOrders)
@@ -33,24 +34,62 @@ export const createNewOrder = async (req, res) => {
         })
         saveNewOrder.save()
                   .then((saved) => { 
-                   res.json({message: "The Order has been saved succesfully", saved})
+                   res.status(200).json({message: "The Order has been saved succesfully", saved});
                   })
                   .catch((err) => { 
-                   console.log(err)
+                    res.status(404).json({ message: 'Error!' });
                   })
      } catch (error) {
-       console.log(error)
+      res.status(500).json({ error: 'Error' });
      }
     
 }
 
 export const EditOrder = async (req, res) => { 
-    
+  const { orderId } = req.params;
+  const {state, manufacturingCost} = req.body
+
+
+  try {
+        Orders.findByIdAndUpdate({ _id: orderId }, { 
+              state: state,
+              manufacturingCost: manufacturingCost,
+          })
+          .then((orderEdited) => {                                      
+          res.status(200).json({message: "The Order has been edited succesfully", orderEdited});
+          })
+          .catch((err) => { 
+            res.status(404).json({ message: 'Error!' });
+          })
+
+    } catch (error) {
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
 }
 
+
+
+
+
 export const DeleteOrder = async (req, res) => { 
-    
+  const { orderId } = req.params;
+  console.log("RECIBI:", req.params)
+
+  try {
+    const deletedOrder = await Orders.findByIdAndDelete({_id: orderId});
+
+    if (deletedOrder) {
+      res.status(200).json({ message: 'Order deleted Correctly', deleted: deletedOrder });
+    } else {
+      res.status(404).json({ message: 'Order doesen`t exist' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error' });
+  }
 }
+
+
 
 
 export const savePublication = async (req, res) => { 

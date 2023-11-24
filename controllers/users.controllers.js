@@ -1,15 +1,14 @@
 import User from "../models/users.js"
+import bcrypt from "bcrypt"
 
 export const getAllUsers = async (req, res) => { 
-   /*   User.find()
+    User.find()
           .then((users) => { 
             res.send(users)
            })
           .catch((err) => { 
            console.log(err)
-           })*/
-
-           res.send("hi")
+           })
 }
 
 
@@ -27,7 +26,7 @@ export const getUserData = async (req, res) => {
 
 
 export const Register = async (req, res) => { 
-    const {name, email, password} = req.body
+    const {name, surname, email, password, rol} = req.body
     console.log(req.body)
     await User.findOne({email})
                .then((user) => { 
@@ -42,8 +41,10 @@ export const Register = async (req, res) => {
                            else { 
                                  const newUser = new User ( { 
                                     name: name,
+                                    surname: surname,
                                     password: passwordHash,
                                     email: email,
+                                    rol: rol
                                  })
                                  newUser.save()
                                        .then((user) => { 
