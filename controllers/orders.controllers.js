@@ -24,10 +24,9 @@ export const getOneOrder = async (req, res) => {
 }
 
 export const createNewOrder = async (req, res) => { 
-    const {id, manufacturingCost, state, orderDetail} = req.body
+    const {manufacturingCost, state, orderDetail} = req.body
     try {
         const saveNewOrder = new Orders ( { 
-            id: id,
             manufacturingCost: manufacturingCost,
             state: state,
             orderDetail: orderDetail,

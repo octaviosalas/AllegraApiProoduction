@@ -3,10 +3,6 @@ const { Schema } = mongoose;
 
 
 const ordersSchema = mongoose.Schema( { 
-    id: { 
-        type: String,
-        required: true
-    }, 
     manufacturingCost: { 
         type: String,
         required: true
