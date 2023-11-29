@@ -20,7 +20,7 @@ const usersSchema = mongoose.Schema( {
         required: true
     },
     rol: { 
-        type: Number, //1 - Admin 2-Confeccion 3-Corte 4-Planchado/ControlDeCalidad
+        type: String, //1 - Admin 2-Confeccion 3-Corte 4-Planchado/ControlDeCalidad
         required: true
     },
 })

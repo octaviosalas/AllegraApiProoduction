@@ -27,6 +27,19 @@ export const getUserData = async (req, res) => {
 
 export const Register = async (req, res) => { 
     const {name, surname, email, password, rol} = req.body
+    
+    const transformRolValue = () => { 
+      if(rol === "Admin") { 
+        return 1
+      } else if (rol === "Confeccion") { 
+        return 2
+      } else if (rol === "Corte") { 
+        return 3
+      } else if (rol === "Planchado / Control de Calidad") { 
+        return 4
+      }
+    }
+
     console.log(req.body)
     await User.findOne({email})
                .then((user) => { 
@@ -34,7 +47,7 @@ export const Register = async (req, res) => {
                         res.json({message: "The email exist in our DataBase. Please, select other"})
                      } else if (!name || !email || !password) { 
                         res.json({message: "Data is missing to be able to register. Please complete all fields"})
-                     } else { 
+                     }else { 
                         console.log(req.body)
                         bcrypt.hash(password, 10, (err, passwordHash) => { 
                            if(err) res.json({err})
@@ -44,7 +57,7 @@ export const Register = async (req, res) => {
                                     surname: surname,
                                     password: passwordHash,
                                     email: email,
-                                    rol: rol
+                                    rol: transformRolValue()
                                  })
                                  newUser.save()
                                        .then((user) => { 
