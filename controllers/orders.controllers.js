@@ -45,8 +45,7 @@ export const createNewOrder = async (req, res) => {
                   })
      } catch (error) {
       res.status(500).json({ error: 'Error' });
-     }
-    
+     } 
 }
 
 export const EditOrderState = async (req, res) => {
