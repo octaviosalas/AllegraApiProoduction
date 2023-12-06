@@ -28,25 +28,61 @@ export const getOneOrder = async (req, res) => {
                 })
 }
 
-export const createNewOrder = async (req, res) => { 
-    const {manufacturingCost, state, orderDetail} = req.body
-    try {
-        const saveNewOrder = new Orders ( { 
-            manufacturingCost: manufacturingCost,
-            state: state,
-            orderDetail: orderDetail,
-        })
-        saveNewOrder.save()
-                  .then((saved) => { 
-                   res.status(200).json({message: "The Order has been saved succesfully", saved});
-                  })
-                  .catch((err) => { 
-                    res.status(404).json({ message: 'Error!' });
-                  })
-     } catch (error) {
-      res.status(500).json({ error: 'Error' });
-     } 
-}
+
+
+
+
+
+const formatManufacturingCost = (cost) => {
+  const numericCost = parseFloat(cost);
+
+  if (!isNaN(numericCost) && typeof numericCost === 'number') {
+    const formattedCost = `${numericCost.toLocaleString("es-AR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      useGrouping: true,
+    })} ARS`;
+
+    return formattedCost;
+  } else {
+    return cost;
+  }
+};
+
+
+
+
+
+export const createNewOrder = async (req, res) => {
+  const { manufacturingCost, state, orderDetail } = req.body;
+
+  try {
+    // Formatear manufacturingCost antes de guardarlo
+    const formattedManufacturingCost = formatManufacturingCost(manufacturingCost);
+
+    const saveNewOrder = new Orders({
+      manufacturingCost: formattedManufacturingCost,
+      state: state,
+      orderDetail: orderDetail,
+    });
+
+    saveNewOrder.save()
+      .then((saved) => {
+        res.status(200).json({ message: "The Order has been saved successfully", saved });
+      })
+      .catch((err) => {
+        res.status(404).json({ message: 'Error!' });
+      });
+  } catch (error) {
+    res.status(500).json({ error: 'Error' });
+  }
+};
+
+
+
+
+
+
 
 export const EditOrderState = async (req, res) => {
   const { orderId } = req.params;
