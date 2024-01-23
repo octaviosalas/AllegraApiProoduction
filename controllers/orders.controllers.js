@@ -1,9 +1,6 @@
-import Orders from "../models/orders.js"
 import xlsx from 'xlsx';
-import multer from "multer";
+import Orders from '../models/orders.js';
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 export const getAllOrders = async (req, res) => { 
   console.log("Recibi una peticion")
@@ -153,8 +150,8 @@ export const DeleteOrder = async (req, res) => {
   }
 }
 
-
 export const addExcelDocument = async (req, res) => {
+  console.log('Datos recibidos en el servidor:', req.file, req.body);
   try {
     if (!req.file) {
       return res.status(400).send('No se ha proporcionado un archivo Excel');
@@ -164,17 +161,14 @@ export const addExcelDocument = async (req, res) => {
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
 
-    // Obtener el rango de filas
     const range = xlsx.utils.decode_range(sheet['!ref']);
     const rows = range.e.r + 1;
 
-    // Recorrer todas las filas
     for (let i = 1; i < rows; i++) {
-      const manufacturingCost = sheet['A' + (i + 1)].v;
-      const state = sheet['B' + (i + 1)].v;
-      const orderDetailString = sheet['C' + (i + 1)].v;
+      const manufacturingCost = sheet[`F${i + 1}`].v;
+      const state = sheet[`E${i + 1}`].v;
+      const orderDetailString = sheet[`A${i + 1}`].v;
 
-      // Separar los objetos usando '|||' y '///'
       const propertiesArray = orderDetailString.split('|||');
       const orderDetail = propertiesArray.map((objString) => {
         const objProperties = objString.split('///');
@@ -186,20 +180,19 @@ export const addExcelDocument = async (req, res) => {
         };
       });
 
-      // Crear una nueva instancia del modelo Orders
       const newOrder = new Orders({
         manufacturingCost,
         state,
         orderDetail,
       });
 
-      // Guardar en la base de datos
       await newOrder.save();
     }
 
-    res.status(200).send('Datos almacenados exitosamente en la base de datos');
+    res.status(200).json({ message: 'Datos almacenados exitosamente en la base de datos' });
   } catch (error) {
     console.error('Error al procesar los datos:', error);
     res.status(500).send('Error interno del servidor');
   }
 };
+
